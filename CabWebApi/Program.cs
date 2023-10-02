@@ -1,3 +1,4 @@
+using CabWebApi.Content.Extensions;
 using CabWebApi.Domain.Core;
 using CabWebApi.Domain.Interfaces;
 using CabWebApi.Infrastructure.Business;
@@ -5,6 +6,7 @@ using CabWebApi.Infrastructure.Data;
 using CabWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Console;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder();
 builder.WebHost.ConfigureServices(services =>
@@ -22,6 +24,8 @@ builder.WebHost.ConfigureServices(services =>
                      "Trusted_Connection: true;")
              );
 });
+//builder.Logging.AddConsole();
+//builder.Logging.SetMinimumLevel(LogLevel.Information);
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
@@ -30,4 +34,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseRouting();
 app.MapControllers();
+app.UseConsoleLogging<Program>(LogLevel.Information);
 app.Run();
