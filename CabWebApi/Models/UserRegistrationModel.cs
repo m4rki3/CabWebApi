@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 namespace CabWebApi.Models;
 public class UserRegistrationModel
 {
-    [Index("Name")]
     [Required(ErrorMessage = "This field is required")]
     [StringLength(30, MinimumLength = 1, ErrorMessage = "Name is too long")]
     [RegularExpression("[A-Za-z- ]", ErrorMessage = "Name contains incorrect symbols")]

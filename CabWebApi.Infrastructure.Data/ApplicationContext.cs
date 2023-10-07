@@ -16,6 +16,10 @@ public class ApplicationContext : DbContext
     public DbSet<User> Clients { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<GeoLocation> GeoLocations { get; set; }
+    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+    {
+        Database.EnsureCreated();
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new CarConfiguration());
