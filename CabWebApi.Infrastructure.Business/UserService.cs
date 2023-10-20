@@ -14,16 +14,17 @@ public class UserService : IUserService
     public bool IsRegistered(User user)
     {
         User? repositoryUser = repository.GetAll("PhoneNumber", user.PhoneNumber)
+                                         .Result
                                          .FirstOrDefault();
         return repositoryUser is not null ? true : false;
     }
     // доделать метод проблема с уникальностью номера телефона
     public bool TryRegister(User user)
     {
-        if (repository.Get(user.Id) is null)
+        if (repository.Get(user.Id).Result is null)
         {
             repository.Create(user);
-            repository.SaveChanges();
+            repository.SaveChangesAsync();
             return true;
         }
         return false;

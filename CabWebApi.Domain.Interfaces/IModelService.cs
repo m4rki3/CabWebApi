@@ -8,28 +8,29 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CabWebApi.Domain.Interfaces;
+// настроить асинхронность
 public interface IModelService<TModel>
     where TModel : class
 {
     IModelRepository<TModel> Repository { get; }
-    IEnumerable<TModel> Get() =>
+    Task<List<TModel>> GetAllAsync() =>
         Repository.GetAll();
 
-    IEnumerable<TModel> GetAll(string propertyName, object? value) =>
+    Task<List<TModel>> GetAllAsync(string propertyName, object? value) =>
         Repository.GetAll(propertyName, value);
 
-    TModel? Get(int id) =>
+    ValueTask<TModel?> GetAsync(int id) =>
         Repository.Get(id);
 
-    void Update(TModel model)
+    Task UpdateAsync(TModel model)
     {
         Repository.Update(model);
-        Repository.SaveChanges();
+        return Repository.SaveChangesAsync();
     }
-    void Delete(TModel model)
+    Task DeleteAsync(TModel model)
     {
         Repository.Delete(model);
-        Repository.SaveChanges();
+        return Repository.SaveChangesAsync();
     }
     void Create(TModel model)
     {
@@ -45,6 +46,6 @@ public interface IModelService<TModel>
         //}
         //return false;
         Repository.Create(model);
-        Repository.SaveChanges();
+        Repository.SaveChangesAsync();
     }
 }
