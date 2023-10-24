@@ -1,5 +1,6 @@
 ﻿using CabWebApi.Domain.Core;
 using CabWebApi.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,38 +15,30 @@ public interface IModelService<TModel>
 {
     IModelRepository<TModel> Repository { get; }
     Task<List<TModel>> GetAllAsync() =>
-        Repository.GetAll();
+        Repository.GetAllAsync();
 
-    Task<List<TModel>> GetAllAsync(string propertyName, object? value) =>
-        Repository.GetAll(propertyName, value);
+    Task<List<TModel>> GetAllWithAsync(string propertyName, params object?[] propertyValues) =>
+        Repository.GetAllWithAsync(propertyName, propertyValues);
 
     ValueTask<TModel?> GetAsync(int id) =>
-        Repository.Get(id);
+        Repository.GetAsync(id);
 
-    Task UpdateAsync(TModel model)
+    Task<int> UpdateAsync(TModel model)
     {
         Repository.Update(model);
         return Repository.SaveChangesAsync();
     }
-    Task DeleteAsync(TModel model)
+    Task<int> DeleteAsync(TModel model)
     {
         Repository.Delete(model);
         return Repository.SaveChangesAsync();
     }
-    void Create(TModel model)
-    {
-        //int? modelId = (int?)model.GetType()
-        //                          .GetProperty("Id", typeof(int))?
-        //                          .GetValue(model);
-        //int toCreateId = modelId ?? -1;
-        //if (toCreateId == -1 || Repository.Get(toCreateId) is null)
-        //{
-        //    Repository.Create(model);
-        //    Repository.SaveChanges();
-        //    return true;
-        //}
-        //return false;
-        Repository.Create(model);
-        Repository.SaveChangesAsync();
-    }
+    Task<(EntityEntry<TModel>, int)> CreateAsync(TModel model) =>
+        Repository.CreateAsync(model)
+                  .AsTask()
+                  .ContinueWith(createTask =>
+                  {
+                      int savedEntries = Repository.SaveChangesAsync().Result;
+                      return (createTask.Result, savedEntries);
+                  });
 }

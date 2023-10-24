@@ -1,12 +1,15 @@
-﻿namespace CabWebApi.Domain.Interfaces;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+namespace CabWebApi.Domain.Interfaces;
 public interface IModelRepository<TModel>
     where TModel : class
 {
-    Task<List<TModel>> GetAll();
-    Task<List<TModel>> GetAll(string propertyName, object? value);
-    ValueTask<TModel?> Get(int id);
-    Task Create(TModel model);
+    Task<List<TModel>> GetAllAsync();
+    Task<List<TModel>> GetAllWithAsync(string propertyName, params object?[] propertyValues);
+    ValueTask<TModel?> GetAsync(int id);
+    ValueTask<EntityEntry<TModel>> CreateAsync(TModel model);
+    // изменить апдейт
     void Update(TModel model);
     void Delete(TModel model);
-    Task SaveChangesAsync();
+    Task<int> SaveChangesAsync();
 }
