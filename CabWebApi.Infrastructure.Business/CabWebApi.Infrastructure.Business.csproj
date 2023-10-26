@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CabWebApi.Domain.Core\CabWebApi.Domain.Core.csproj" />
     <ProjectReference Include="..\CabWebApi.Domain.Interfaces\CabWebApi.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\CabWebApi.Services.Interfaces\CabWebApi.Services.Interfaces.csproj" />

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CabWebApi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using CabWebApi.Domain.Core;
 
 namespace CabWebApi.Infrastructure.Data;
 // решить проблему с асинхронностью, настроить реализацию
@@ -12,6 +13,7 @@ public class ModelRepository<TModel> : IModelRepository<TModel>
     {
         this.context = context;
     }
+
     public ValueTask<EntityEntry<TModel>> CreateAsync(TModel model) =>
         context.Set<TModel>().AddAsync(model);
 

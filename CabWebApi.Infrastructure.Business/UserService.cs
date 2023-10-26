@@ -2,6 +2,9 @@
 using CabWebApi.Domain.Core;
 using CabWebApi.Domain.Interfaces;
 using CabWebApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Net;
+using System.Security.Claims;
 
 namespace CabWebApi.Infrastructure.Business;
 public class UserService : IUserService
@@ -11,22 +14,46 @@ public class UserService : IUserService
     public UserService(IModelRepository<User> repository) =>
         this.repository = repository;
 
-    public bool IsRegistered(User user)
-    {
-        User? repositoryUser = repository.GetAll("PhoneNumber", user.PhoneNumber)
-                                         .Result
-                                         .FirstOrDefault();
-        return repositoryUser is not null ? true : false;
-    }
-    // доделать метод проблема с уникальностью номера телефона
-    public bool TryRegister(User user)
-    {
-        if (repository.Get(user.Id).Result is null)
+    public Task<bool> IsRegistered(string phoneNumber) =>
+        repository.GetAllWithAsync(nameof(User.PhoneNumber), phoneNumber)
+                  .ContinueWith(task =>
+                  {
+                      List<User> dbUsers = task.Result;
+                      return dbUsers.Count == 0 ? false : true;
+                  });
+
+    public Task<(bool, User?)> TryGetRegistered(string phoneNumber) =>
+        repository.GetAllWithAsync(nameof(User.PhoneNumber), phoneNumber)
+                  .ContinueWith(task =>
+                  {
+                      User? dbUser = task.Result.SingleOrDefault();
+                      return dbUser is null ? (false, dbUser) : (true, dbUser);
+                  });
+
+    public User FromModel(
+        string name, string phoneNumber,
+        string email, string password, DateTime birthDate) =>
+        new User()
         {
-            repository.Create(user);
-            repository.SaveChangesAsync();
-            return true;
-        }
-        return false;
+            Name = name,
+            PhoneNumber = phoneNumber,
+            Email = email,
+            Password = password,
+            BirthDate = birthDate
+        };
+
+    public ClaimsPrincipal GetPrincipal(User user)
+    {
+        List<Claim> claims = new()
+        {
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.DateOfBirth, user.BirthDate.ToShortDateString())
+        };
+        ClaimsIdentity identity = new(
+            claims,
+            CookieAuthenticationDefaults.AuthenticationScheme);
+        return new ClaimsPrincipal(identity);
     }
 }
