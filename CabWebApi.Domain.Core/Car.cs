@@ -7,4 +7,5 @@ public class Car
     public int DriverId { get; set; }
     public Driver Driver { get; set; }
     public CarStatus Status { get; set; }
+    public IEnumerable<Order> Orders { get; set; }
 }

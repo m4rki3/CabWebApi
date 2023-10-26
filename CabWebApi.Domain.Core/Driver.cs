@@ -11,5 +11,7 @@ public class Driver
     public string Name { get; set; }
     public int Salary { get; set; }
     public byte Experience { get; set; }
+    // DriverStatus?
     public IEnumerable<Car> Cars { get; set; }
+    public IEnumerable<Order> Orders { get; set; }
 }
