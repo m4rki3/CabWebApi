@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 
@@ -21,42 +22,36 @@ namespace CabWebApi.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private ISearchService searchService;
     private IUserService userService;
-    public AccountController(ISearchService searchService, IUserService userService)
+    public AccountController(IUserService userService)
     {
-        this.searchService = searchService;
         this.userService = userService;
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<User>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAll()
     {
-        var getUsersTask = userService.GetAllAsync();
-        await getUsersTask;
+        List<User> dbUsers = await userService.GetAllAsync();
 
-        List<User> users = getUsersTask.Result;
-        if (users.IsNullOrEmpty())
-            return NotFound();
+        if (dbUsers.IsNullOrEmpty())
+            return NotFound("Users are not found in database");
 
-        return Ok(users);
+        return Ok(dbUsers);
     }
 
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(int id)
     {
-        var getUserTask = userService.GetAsync(id);
-        await getUserTask;
+        User? dbUser = await userService.GetAsync(id);
 
-        User? user = getUserTask.Result;
-        if (user is null)
-            return NotFound();
+        if (dbUser is null)
+            return NotFound("User with the same Id is not found in database");
 
-        return Ok(user);
+        return Ok(dbUser);
     }
 
     [HttpPost]
@@ -65,55 +60,38 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Register([FromForm] UserRegistrationModel model)
     {
         // хэширование
-        User user = new()
-        {
-            Name = model.Name,
-            PhoneNumber = model.PhoneNumber,
-            Email = model.Email,
-            Password = model.Password,
-            BirthDate = model.BirthDate
-        };
-        var getUsersTask = userService.GetAllAsync(nameof(user.PhoneNumber), user.PhoneNumber);
-        await getUsersTask;
+        bool userIsRegistered = await userService.IsRegistered(model.PhoneNumber);
 
-        User? userFromDb = getUsersTask.Result.SingleOrDefault();
-        if (userFromDb is not null)
-            return BadRequest("User is already registered");
+        if (userIsRegistered)
+            return BadRequest("User with this phone number had been already registered");
 
-        userService.Create(user);
-        return Ok();
+		User user = userService.FromModel(
+        	model.Name, model.PhoneNumber, model.Email, model.Password, model.BirthDate
+        );
+
+		User created = (await userService.CreateAsync(user)).Item1.Entity;
+
+        return CreatedAtAction(nameof(Register), created);
     }
 
     [HttpPost(Name = "/login")]
-    [ProducesResponseType(StatusCodes.Status302Found)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Login([FromForm] UserLoginModel model, string? returnUrl)
     {
-        //User? user = userService.GetAllAsync(nameof(user.PhoneNumber), model.PhoneNumber)
-        //                        .FirstOrDefault();
-        User? user;
-        var getUserTask = userService.GetAllAsync(nameof(user.PhoneNumber), model.PhoneNumber);
-        await getUserTask;
+        var userIsRegistered = await userService.TryGetRegistered(model.PhoneNumber);
 
-        user = getUserTask.Result.SingleOrDefault();
-        if (user is null)
-            return NotFound();
+        if (!userIsRegistered.Item1)
+            return BadRequest("User with this phone number has not been registered yet");
 
-        List<Claim> claims = new()
-        {
-            new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.DateOfBirth, user.BirthDate.ToShortDateString())
-        };
-        ClaimsIdentity identity = new(
-            claims,
-            CookieAuthenticationDefaults.AuthenticationScheme
-        );
-        await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            new ClaimsPrincipal(identity)
-        );
+        userIsRegistered.Item2 = null!;
+        User dbUser = userIsRegistered.Item2;
+        if (dbUser.Password != model.Password)
+            return ValidationProblem("Passwords are not match");
+
+        ClaimsPrincipal principal = userService.GetPrincipal(dbUser);
+        await HttpContext.SignInAsync(principal);
+
         return LocalRedirect(returnUrl ?? "/");
     }
 
@@ -122,50 +100,47 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
         return Redirect("/login");
     }
 
-    //[HttpPut]
-    //public IActionResult Update(User user) =>
-    //    userService.TryUpdate(user, user.Id) is false ? BadRequest() : Ok();
-
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(User user)
     {
-        var getUserTask = userService.GetAsync(user.Id);
-        await getUserTask;
+        User? dbUser = await userService.GetAsync(user.Id);
 
-        User? userFromDb = getUserTask.Result;
-        if (userFromDb is null)
-            return NotFound();
+        if (dbUser is null)
+            return NotFound("User with the same Id is not found in database");
 
-        userFromDb = user;
-        await userService.UpdateAsync(userFromDb);
-        return Ok(userFromDb);
+        // проблема с копированием
+        // каждый раз обновлять индекс номера телефона - затраты по производительности
+        // но ведь база данных сама решает, делать ли запрос на обновление, получая те же данные
+        // значит проблемы перезаписи нет?
+        dbUser = user;
+        await userService.UpdateAsync(dbUser);
+
+        return Ok(dbUser);
     }
-    // попробовать реализовать обновление свойства объекта
-    //public Task<IActionResult> Update(User user, Expression<Func<User, object?>> update, object? value)
 
     [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(User user)
     {
-        var getUserTask = userService.GetAsync(user.Id);
-        await getUserTask;
+        User? dbUser = await userService.GetAsync(user.Id);
 
-        User? userFromDb = getUserTask.Result;
-        if (userFromDb is null)
-            return NotFound();
+        if (dbUser is null)
+            return NotFound("User with the same Id is not found in database");
 
-        await userService.DeleteAsync(userFromDb);
-        return Ok();
+        await userService.DeleteAsync(dbUser);
+
+        return Ok("User is deleted successfully");
     }
 
     [HttpGet("/accessdenied")]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status403Forbidden)]
     public IActionResult AccessDenied(string? returnUrl) =>
         StatusCode(statusCode: 403, returnUrl);
 }
