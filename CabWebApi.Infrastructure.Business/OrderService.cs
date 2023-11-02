@@ -11,16 +11,14 @@ namespace CabWebApi.Infrastructure.Business;
 public class OrderService : IOrderService
 {
 	private readonly IModelRepository<Order> repository;
-    private readonly IModelService<Location> locationService;
     private const float carsRatio = 0.2f;
     private const int carsRatioPrice = 500;
     private const int travelTimePrice = 9;
     private const int weatherPrice = 50;
     public IModelRepository<Order> Repository => repository;
-    public OrderService(IModelRepository<Order> repository, IModelService<Location> locationService)
+    public OrderService(IModelRepository<Order> repository)
     {
         this.repository = repository;
-        this.locationService = locationService;
     }
     public Task<List<Order>> GetOrdersInExecution()
     {
@@ -31,9 +29,8 @@ public class OrderService : IOrderService
             if (orderStatus != OrderStatus.Completed &&
                 orderStatus != OrderStatus.Canceled)
                     inExecutionStatuses.Add(orderStatus);
-        
-        Order order;
-		return repository.GetAllWithAsync(nameof(order.Status), inExecutionStatuses);
+
+		return repository.GetAllWithAsync(nameof(Order.Status), inExecutionStatuses);
     }
     public Task<int> GetPriceAsync(
         int avaliableCarsCount, int carsInWorkCount, bool badWeather,
@@ -50,27 +47,4 @@ public class OrderService : IOrderService
         };
         return Task.Run(getPrice);
     }
-
-    public Order FromModel(
-        int userId, int carId,
-        int departureId, int destinationId, int price) =>
-        new Order()
-        {
-            UserId = userId,
-            CarId = carId,
-            DepartureId = departureId,
-            DestinationId = destinationId,
-            Status = OrderStatus.Created,
-            Price = price
-        };
-
-    public Task<(int, int)> CreateLocations(Location departure, Location destination) =>
-        locationService.CreateAsync(departure)
-                       .ContinueWith(task =>
-                       {
-                           int destinationId = locationService.CreateAsync(destination)
-                                                              .Result.Item1.Entity.Id;
-                           int departureId = task.Result.Item1.Entity.Id;
-                           return (departureId, destinationId);
-                       });
 }
