@@ -8,10 +8,11 @@ namespace CabWebApi.Domain.Core;
 public class User
 {
     public int Id { get; set; }
-    public string Name { get; set; } = null!;
-    public string PhoneNumber { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string Password { get; set; } = null!;
+    public string Name { get; set; }
+    public string PhoneNumber { get; set; }
+    public string Email { get; set; }
+    public string Password { get; set; }
     public DateTime BirthDate { get; set; }
-    public IEnumerable<Order> Orders { get; set; } = null!;
+    public IEnumerable<Order> Orders { get; set; }
+    public string? Discriminator { get; set; }
 }

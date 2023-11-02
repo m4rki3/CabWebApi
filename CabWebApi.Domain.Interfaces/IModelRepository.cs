@@ -8,7 +8,6 @@ public interface IModelRepository<TModel>
     Task<List<TModel>> GetAllWithAsync(string propertyName, params object?[] propertyValues);
     ValueTask<TModel?> GetAsync(int id);
     ValueTask<EntityEntry<TModel>> CreateAsync(TModel model);
-    // изменить апдейт
     void Update(TModel model);
     void Delete(TModel model);
     Task<int> SaveChangesAsync();
