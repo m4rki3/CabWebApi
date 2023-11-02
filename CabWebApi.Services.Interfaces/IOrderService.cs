@@ -13,6 +13,4 @@ public interface IOrderService : IModelService<Order>
 	Task<int> GetPriceAsync(
 		int avaliableCarsCount, int carsInWorkCount, bool badWeather,
 		int travelTime, params int[] travelTimeToClient);
-	Order FromModel(int userId, int carId, int departureId, int destinationId, int price);
-	Task<(int, int)> CreateLocations(Location departure, Location destination);
 }
