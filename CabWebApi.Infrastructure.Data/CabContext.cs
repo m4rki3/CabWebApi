@@ -7,22 +7,18 @@ using System.Text;
 using System.Threading.Tasks;
 using CabWebApi.Domain.Core;
 using CabWebApi.Infrastructure.Data.Configurations;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace CabWebApi.Infrastructure.Data;
 public class CabContext : DbContext
 {
     public DbSet<Car> Cars { get; set; }
     public DbSet<Driver> Drivers { get; set; }
-    public DbSet<User> Clients { get; set; }
+    public DbSet<User> Users { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Location> Locations { get; set; }
     public CabContext(DbContextOptions<CabContext> options) : base(options)
     {
         //Database.EnsureCreated();
-    }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

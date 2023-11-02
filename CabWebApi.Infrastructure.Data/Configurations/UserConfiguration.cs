@@ -12,27 +12,29 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasKey(client => client.Id)
+        builder.UseTphMappingStrategy();
+
+        builder.HasKey(user => user.Id)
                .HasName("PK_Clients_Id");
                //.IsClustered();
 
-        builder.Property(client => client.Name)
+        builder.Property(user => user.Name)
                .HasColumnType("nvarchar(30)")
                .IsRequired();
 
-        builder.Property(client => client.PhoneNumber)
+        builder.Property(user => user.PhoneNumber)
                .HasColumnType("nchar(12)")
                .IsRequired();
 
-        builder.HasIndex(client => client.PhoneNumber)
+        builder.HasIndex(user => user.PhoneNumber)
                .HasDatabaseName("IX_Clients_PhoneNumber")
                .IsUnique();
 
-        builder.Property(client => client.Password)
+        builder.Property(user => user.Password)
                .HasColumnType("nvarchar(20)")
                .IsRequired();
 
-        builder.Property(client => client.BirthDate)
+        builder.Property(user => user.BirthDate)
                .HasColumnType("date")
                .IsRequired();
     }

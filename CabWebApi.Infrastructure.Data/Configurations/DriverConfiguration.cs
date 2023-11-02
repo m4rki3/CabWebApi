@@ -12,20 +12,12 @@ public class DriverConfiguration : IEntityTypeConfiguration<Driver>
 {
     public void Configure(EntityTypeBuilder<Driver> builder)
     {
-        builder.HasKey(driver => driver.Id)
-               .HasName("PK_Drivers_Id");
-               //.IsClustered();
-
-        builder.Property(driver => driver.Name)
-               .HasColumnType("nvarchar(20)")
-               .IsRequired();
-
         builder.Property(driver => driver.Salary)
                .HasColumnType("int")
                .IsRequired();
 
-        builder.Property(driver => driver.Experience)
-               .HasColumnType("tinyint")
+        builder.Property(driver => driver.DrivingLicense)
+               .HasColumnType("int")
                .IsRequired();
     }
 }

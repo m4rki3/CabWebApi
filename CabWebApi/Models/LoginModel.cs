@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace CabWebApi.Models;
-public class UserLoginModel
+public class LoginModel
 {
-    [Required(ErrorMessage = "You did not enter the phone number")]
+    [Required(ErrorMessage = "This field is required")]
     [Phone(ErrorMessage = "Phone number is incorrect")]
     [DataType(DataType.PhoneNumber)]
     [Display(Name = "Phone number")]
     public string PhoneNumber { get; set; }
 
 
-    [Required(ErrorMessage = "You did not enter the password")]
+    [Required(ErrorMessage = "This field is required")]
     [DataType(DataType.Password)]
-    [RegularExpression(@"[A-Za-z0-9_-", ErrorMessage = "")]
+    [RegularExpression(@"[A-Za-z0-9_]*]",
+        ErrorMessage = "Password must contain only A-Z, a-z, 0-9, _ symbols")]
+
     [UIHint("Password")]
     public string Password { get; set; }
 }

@@ -11,16 +11,16 @@ public class CarConfiguration : IEntityTypeConfiguration<Car>
                .HasName("PK_Cars_Id");
                //.IsClustered();
 
-        builder.Property(car => car.RegistrationNumber)
-               .HasColumnType("nchar(6)")
+        builder.Property(car => car.RegistrationPlate)
+               .HasColumnType("nvarchar(9)")
                .IsRequired();
 
         builder.Property(car => car.ModelName)
                .HasColumnType("nvarchar(40)")
                .IsRequired();
 
-        builder.HasIndex(car => car.RegistrationNumber)
-               .HasDatabaseName("IX_Cars_RegistrationNumber")
+        builder.HasIndex(car => car.RegistrationPlate)
+               .HasDatabaseName("IX_Cars_RegistrationPlate")
                .IsUnique();
 
         builder.Property(car => car.Status)

@@ -41,14 +41,14 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
                .IsRequired();
 
         builder.HasOne(order => order.Departure)
-               .WithOne(location => location.Order)
+               .WithOne(location => location.DepartureOrder)
                .HasForeignKey<Order>(order => order.DepartureId)
                .HasConstraintName("FK_Orders_DepartureId")
                .OnDelete(DeleteBehavior.NoAction)
                .IsRequired();
 
         builder.HasOne(order => order.Destination)
-               .WithOne(location => location.Order)
+               .WithOne(location => location.DestinationOrder)
                .HasForeignKey<Order>(order => order.DestinationId)
                .HasConstraintName("FK_Orders_DestinationId")
                .OnDelete(DeleteBehavior.NoAction)
