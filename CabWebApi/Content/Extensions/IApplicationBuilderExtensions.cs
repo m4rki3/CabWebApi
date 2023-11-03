@@ -4,10 +4,8 @@ using System.Runtime.CompilerServices;
 namespace CabWebApi.Content.Extensions;
 public static class IApplicationBuilderExtensions
 {
-    public static IApplicationBuilder UseConsoleLogging<TCategory>(
-        this IApplicationBuilder builder,
-        LogLevel logLevel)
-        where TCategory : class
-        =>
-        builder.UseMiddleware<ConsoleLoggerMiddleware>(typeof(TCategory), logLevel);
+    public static IApplicationBuilder UseConsoleLogging<TCategoryName>(
+        this IApplicationBuilder builder, LogLevel minLogLevel
+    ) where TCategoryName : class =>
+        builder.UseMiddleware<ConsoleLoggerMiddleware>(typeof(TCategoryName), minLogLevel);
 }

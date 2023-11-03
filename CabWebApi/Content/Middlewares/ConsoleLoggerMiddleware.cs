@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging.Console;
+﻿using Azure.Core;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.Debug;
 using Microsoft.Extensions.Options;
 
@@ -21,7 +22,14 @@ public class ConsoleLoggerMiddleware
     }
     public async Task InvokeAsync(HttpContext context)
     {
-        logger.Log(logLevel, "message");
+        string path = context.Request.Path.ToString();
+        string method = context.Request.Method;
+        string? query = context.Request.Query.ToString();
+        logger.Log(LogLevel.Information, $"Request: {method} - {path} - {query}");
         await next.Invoke(context);
+
+        int code = context.Response.StatusCode;
+        string? body = context.Response.Body.ToString();
+        logger.Log(LogLevel.Information, $"Responce: {code} - {body}");
     }
 }
