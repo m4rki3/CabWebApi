@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CabWebApi.Domain.Core;
 public enum CarStatus
 {
-    NotAvaliable,
-    InWork,
-    Awaiting
+	NotAvaliable,
+	InWork,
+	Awaiting
 }

@@ -24,7 +24,11 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
 			   .HasColumnType("decimal(8,5)")
 			   .IsRequired();
 
-		builder.Property(location => location.Order)
+		builder.Navigation(location => location.DepartureOrder)
+			   .Metadata
+			   .AddAnnotation(typeof(NotMappedAttribute).ToString(), null);
+
+		builder.Navigation(location => location.DestinationOrder)
 			   .Metadata
 			   .AddAnnotation(typeof(NotMappedAttribute).ToString(), null);
 	}
