@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<enums>
+  <enum name="CarStatus">
+    <member>
+      <const>0</const>
+      <string>NotAvaliable</string>
+    </member>
+    <member>
+      <const>1</const>
+      <string>InWork</string>
+    </member>
+    <member>
+      <const>2</const>
+      <string>Awaiting</string>
+    </member>
+  </enum>
+  <enum name="OrderStatus">
+    <member>
+      <const>0</const>
+      <string>Created</string>
+    </member>
+    <member>
+      <const>1</const>
+      <string>Approved</string>
+    </member>
+    <member>
+      <const>2</const>
+      <string>DriverOnTheWay</string>
+    </member>
+    <member>
+      <const>3</const>
+      <string>DriverIsWaiting</string>
+    </member>
+    <member>
+      <const>4</const>
+      <string>InProgress</string>
+    </member>
+    <member>
+      <const>5</const>
+      <string>Completed</string>
+    </member>
+    <member>
+      <const>6</const>
+      <string>Canceled</string>
+    </member>
+  </enum>
+</enums>
