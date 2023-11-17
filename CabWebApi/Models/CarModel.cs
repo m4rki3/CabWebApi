@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CabWebApi.Domain.Core;
+using System.ComponentModel.DataAnnotations;
 
 namespace CabWebApi.Models;
 public class CarModel
@@ -15,13 +16,12 @@ public class CarModel
 	public string SeriesRegistrationNumber { get; set; }
 
 	[Required(ErrorMessage = "This field is required")]
-	[StringLength(maximumLength: 3, MinimumLength = 2,
-		ErrorMessage = "Region code must contain 2 or 3 numbers")]
-
-	[RegularExpression("[0-9]*", ErrorMessage = "Region code contains incorrect symbols")]
+	[RegularExpression("[0-9]{2,3}", ErrorMessage = "Region code must contain 2 or 3 digits")]
 	public int RegionCode { get; set; }
 
 	[Required(ErrorMessage = "This field is required")]
 	[RegularExpression("[0-9]*", ErrorMessage = "Driver id contains incorrect symbols")]
 	public int DriverId { get; set; }
+
+	public CarStatus Status { get; set; } = CarStatus.NotAvaliable;
 }

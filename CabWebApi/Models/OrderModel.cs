@@ -12,13 +12,21 @@ public class OrderModel
 	[RegularExpression("[0-9]*", ErrorMessage = "Car id contains incorrect symbols")]
 	public int CarId { get; set; }
 
-	[Required(ErrorMessage = "This object is required")]
-	public Location Departure { get; set; } = null!;
+	[Required(ErrorMessage = "This field is required")]
+	public float DepartureLatitude { get; set; }
 
-	[Required(ErrorMessage = "This object is required")]
-	public Location Destination { get; set; } = null!;
+	[Required(ErrorMessage = "This field is required")]
+	public float DepartureLongitude { get; set; }
+
+	[Required(ErrorMessage = "This field is required")]
+	public float DestinationLatitude { get; set; }
+
+	[Required(ErrorMessage = "This field is required")]
+	public float DestinationLongitude { get; set; }
 
 	[Required(ErrorMessage = "This field is required")]
 	[RegularExpression("[0-9]*", ErrorMessage = "Price contains incorrect symbols")]
 	public int Price { get; set; }
+
+	public OrderStatus Status { get; set; } = OrderStatus.Created;
 }
