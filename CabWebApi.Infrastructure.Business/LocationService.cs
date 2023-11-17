@@ -11,8 +11,8 @@ public class LocationService : IModelService<Location>
 {
 	private readonly IModelRepository<Location> repository;
 	public IModelRepository<Location> Repository => repository;
-    public LocationService(IModelRepository<Location> repository)
-    {
-        this.repository = repository;
-    }
+	public LocationService(IModelRepository<Location> repository)
+	{
+		this.repository = repository;
+	}
 }

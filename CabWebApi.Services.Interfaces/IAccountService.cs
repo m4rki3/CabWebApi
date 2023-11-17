@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CabWebApi.Services.Interfaces;
 
 public interface IAccountService<TUser> : IModelService<TUser>
-	where TUser : User
+	where TUser : Person
 {
 	Task<bool> IsRegisteredWith(string propertyName, object? propertyValue);
 	Task<TUser?> GetRegisteredWith(string propertyName, object? propertyValue);

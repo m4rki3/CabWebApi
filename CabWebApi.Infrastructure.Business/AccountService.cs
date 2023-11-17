@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace CabWebApi.Infrastructure.Business;
 
 public class AccountService<TUser> : IAccountService<TUser>
-	where TUser : User
+	where TUser : Person
 {
 	private readonly IModelRepository<TUser> repository;
 	public IModelRepository<TUser> Repository => repository;
@@ -38,8 +38,8 @@ public class AccountService<TUser> : IAccountService<TUser>
 		{
 			new Claim(ClaimTypes.Name, user.Name),
 			new Claim(ClaimTypes.Email, user.Email),
-			new Claim(ClaimTypes.DateOfBirth, user.BirthDate.ToShortTimeString()),
-			new Claim(ClaimTypes.Role, user.GetType().ToString())
+			new Claim(ClaimTypes.DateOfBirth, user.BirthDate.ToShortDateString()),
+			new Claim(ClaimTypes.Role, typeof(TUser).Name)
 		};
 		ClaimsIdentity identity = new(
 			claims, CookieAuthenticationDefaults.AuthenticationScheme

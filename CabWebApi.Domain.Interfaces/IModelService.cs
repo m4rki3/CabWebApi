@@ -11,34 +11,37 @@ using System.Threading.Tasks;
 namespace CabWebApi.Domain.Interfaces;
 // настроить асинхронность
 public interface IModelService<TModel>
-    where TModel : class
+	where TModel : class
 {
-    IModelRepository<TModel> Repository { get; }
-    Task<List<TModel>> GetAllAsync() =>
-        Repository.GetAllAsync();
+	IModelRepository<TModel> Repository { get; }
+	Task<List<TModel>> GetAllAsync() =>
+		Repository.GetAllAsync();
 
-    Task<List<TModel>> GetAllWithAsync(string propertyName, params object?[] propertyValues) =>
-        Repository.GetAllWithAsync(propertyName, propertyValues);
+	Task<List<TModel>> GetAllWithAsync(string propertyName, object? propertyValue) =>
+		Repository.GetAllWithAsync(propertyName, propertyValue);
 
-    ValueTask<TModel?> GetAsync(int id) =>
-        Repository.GetAsync(id);
+	Task<List<TModel>> GetAllWithAsync(string propertyName, IEnumerable<object> propertyValues) =>
+		Repository.GetAllWithAsync(propertyName, propertyValues);
 
-    Task<int> UpdateAsync(TModel model)
-    {
-        Repository.Update(model);
-        return Repository.SaveChangesAsync();
-    }
-    Task<int> DeleteAsync(TModel model)
-    {
-        Repository.Delete(model);
-        return Repository.SaveChangesAsync();
-    }
-    Task<(EntityEntry<TModel>, int)> CreateAsync(TModel model) =>
-        Repository.CreateAsync(model)
-                  .AsTask()
-                  .ContinueWith(createTask =>
-                  {
-                      int savedEntries = Repository.SaveChangesAsync().Result;
-                      return (createTask.Result, savedEntries);
-                  });
+	ValueTask<TModel?> GetAsync(int id) =>
+		Repository.GetAsync(id);
+
+	Task<int> UpdateAsync(TModel model)
+	{
+		Repository.Update(model);
+		return Repository.SaveChangesAsync();
+	}
+	Task<int> DeleteAsync(TModel model)
+	{
+		Repository.Delete(model);
+		return Repository.SaveChangesAsync();
+	}
+	Task<(EntityEntry<TModel>, int)> CreateAsync(TModel model) =>
+		Repository.CreateAsync(model)
+				  .AsTask()
+				  .ContinueWith(createTask =>
+				  {
+					  int savedEntries = Repository.SaveChangesAsync().Result;
+					  return (createTask.Result, savedEntries);
+				  });
 }
