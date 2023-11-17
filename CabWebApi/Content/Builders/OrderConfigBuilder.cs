@@ -3,6 +3,7 @@
 namespace CabWebApi.Content.Builders;
 public class OrderConfigBuilder : OrderBuilder
 {
+	public OrderConfigBuilder(Order order) : base(order) { }
 	public OrderConfigBuilder User(int userId)
 	{
 		order.UserId = userId;
