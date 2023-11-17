@@ -11,76 +11,103 @@ using System.Security.Claims;
 namespace CabWebApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class DriverController: ControllerBase
+[Route("api/[controller]/[action]")]
+public class DriverController : ControllerBase
 {
-	private readonly IModelService<Driver> driverService;
-    public DriverController(IModelService<Driver> driverService)
-    {
+	private readonly IModelService<Driver> modelService;
+	private readonly IAccountService<User> userService;
+	private readonly IAccountService<Driver> driverService;
+	public DriverController(
+		IModelService<Driver> modelService,
+		IAccountService<User> userService,
+		IAccountService<Driver> driverService)
+	{
+		this.modelService = modelService;
+		this.userService = userService;
 		this.driverService = driverService;
-    }
+	}
 
-    [HttpGet]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+	[HttpGet]
+	[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
 	[ProducesResponseType(typeof(List<Driver>), StatusCodes.Status200OK)]
 	public async Task<IActionResult> Get()
-    {
-        List<Driver> dbDrivers = await driverService.GetAllAsync();
+	{
+		List<Driver> dbDrivers = await modelService.GetAllAsync();
 
-        if (dbDrivers.Count == 0)
-            return NotFound("Drivers are not found in database");
+		if (dbDrivers.Count == 0)
+			return NotFound("Drivers are not found in database");
 
-        return Ok(dbDrivers);
-    }
+		return Ok(dbDrivers);
+	}
 
-    [HttpGet]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Get(int id)
-    {
-        Driver? dbDriver = await driverService.GetAsync(id);
+	[HttpGet("{id}")]
+	[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+	public async Task<IActionResult> Get(int id)
+	{
+		Driver? dbDriver = await modelService.GetAsync(id);
 
-        if (dbDriver is null)
-            return NotFound("Driver with requested id is not found in database");
+		if (dbDriver is null)
+			return NotFound("Driver with requested id is not found in database");
 
-        return Ok(dbDriver);
-    }
+		return Ok(dbDriver);
+	}
 
-    [HttpPut]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(Driver), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Update(Driver driver)
-    {
-        Driver? dbDriver = await driverService.GetAsync(driver.Id);
+	[HttpPut("{id}")]
+	[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+	[ProducesResponseType(typeof(Driver), StatusCodes.Status200OK)]
+	public async Task<IActionResult> Update(int id, DriverModel model)
+	{
+		Driver? dbDriver = await modelService.GetAsync(id);
 
-        if (dbDriver is null)
-            return NotFound("Driver with requested id is not found in database");
+		if (dbDriver is null)
+			return NotFound("Driver with requested id is not found in database");
 
-        DriverBuilder builder = new(dbDriver);
-        builder.Named(driver.Name)
-               .HasPhoneNumber(driver.PhoneNumber)
-               .HasEmail(driver.Email)
-               .HasBirthDate(driver.BirthDate)
-               .Earns(driver.Salary)
-               .HasLicense(driver.DrivingLicense);
-        dbDriver = builder.Build();
-        await driverService.UpdateAsync(dbDriver);
+		if (model.PhoneNumber != dbDriver.PhoneNumber)
+		{
+			bool isRegistered = await userService.IsRegisteredWith(
+									nameof(Domain.Core.User.PhoneNumber), model.PhoneNumber)
+								||
+								await driverService.IsRegisteredWith(
+									nameof(Driver.PhoneNumber), model.PhoneNumber);
+			if (isRegistered)
+				return BadRequest(
+					"User or driver with requested phone number had been already registered");
+		}
+		if (model.DrivingLicense != dbDriver.DrivingLicense)
+		{
+			bool isRegistered = await driverService.IsRegisteredWith(
+				nameof(Driver.DrivingLicense), model.DrivingLicense);
 
-        return Ok(dbDriver);
-    }
+			if (isRegistered)
+				return BadRequest("Driver with requested license had been already registered");
+		}
 
-    [HttpDelete]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Delete(int id)
-    {
-        Driver? dbDriver = await driverService.GetAsync(id);
+		DriverBuilder builder = new(dbDriver);
+		builder.Named(model.Name)
+			   .HasPhoneNumber(model.PhoneNumber)
+			   .HasEmail(model.Email)
+			   .HasBirthDate(model.BirthDate)
+			   .Earns(model.Salary)
+			   .HasLicense(model.DrivingLicense);
+		dbDriver = builder.Build();
+		await modelService.UpdateAsync(dbDriver);
 
-        if (dbDriver is null)
-            return NotFound("Driver with requested id is not found in database");
+		return Ok(dbDriver);
+	}
 
-        await driverService.DeleteAsync(dbDriver);
+	[HttpDelete("{id}")]
+	[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+	public async Task<IActionResult> Delete(int id)
+	{
+		Driver? dbDriver = await modelService.GetAsync(id);
 
-        return Ok("Driver is deleted successfully");
-    }
+		if (dbDriver is null)
+			return NotFound("Driver with requested id is not found in database");
+
+		await modelService.DeleteAsync(dbDriver);
+
+		return Ok("Driver is deleted successfully");
+	}
 }
