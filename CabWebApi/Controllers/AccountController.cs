@@ -1,14 +1,11 @@
 using CabWebApi.Content.Builders;
 using CabWebApi.Domain.Core;
 using CabWebApi.Domain.Interfaces;
-using CabWebApi.Infrastructure.Business;
 using CabWebApi.Models;
 using CabWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Specialized;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Security.Principal;
 
@@ -73,7 +70,7 @@ public class AccountController : ControllerBase
 									nameof(Driver.PhoneNumber), model.PhoneNumber);
 
 		if (userIsRegistered)
-			return BadRequest("User with entered phone number had been already registered");
+			return BadRequest("User or driver with entered phone number had been already registered");
 
 		// recursive generics demo
 		UserBuilder builder = new();
@@ -176,12 +173,12 @@ public class AccountController : ControllerBase
 	}
 
 	[HttpPost]
-	[ProducesResponseType(typeof(string), StatusCodes.Status302Found)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
 	public async Task<IActionResult> Logout()
 	{
 		await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-		return RedirectToAction(nameof(UserLogin));
+		return Ok("User has been logged out successfully");
 	}
 
 	[HttpHead]
