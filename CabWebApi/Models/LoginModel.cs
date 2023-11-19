@@ -4,7 +4,7 @@ namespace CabWebApi.Models;
 public class LoginModel
 {
 	[Required(ErrorMessage = "This field is required")]
-	[Phone(ErrorMessage = "Phone number is incorrect")]
+	[RegularExpression(@"^\+7[0-9]{10}", ErrorMessage = "Phone number is incorrect")]
 	[DataType(DataType.PhoneNumber)]
 	[Display(Name = "Phone number")]
 	public string PhoneNumber { get; set; }
