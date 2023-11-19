@@ -26,7 +26,6 @@ builder.WebHost.ConfigureServices(services =>
 			.AddCookie(options =>
 			{
 				options.AccessDeniedPath = "/api/account/accessdenied";
-				options.LogoutPath = "/api/account/userlogin";
 				options.LogoutPath = "/api/account/logout";
 			});
 
