@@ -23,7 +23,7 @@ public class UserModel
 
 
 	[Required(ErrorMessage = "This field is required")]
-	[Phone(ErrorMessage = "Phone number is incorrect")]
+	[RegularExpression(@"^\+7[0-9]{10}", ErrorMessage = "Phone number is incorrect")]
 	[Display(Name = "Your phone number")]
 	[DataType(DataType.PhoneNumber)]
 	public string PhoneNumber { get; set; }
