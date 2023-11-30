@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CabWebApi.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(CabContext))]
-    [Migration("20231114184528_Initial")]
+    [Migration("20231129153424_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
