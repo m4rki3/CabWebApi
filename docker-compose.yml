@@ -23,5 +23,7 @@ services:
     environment:
       ACCEPT_EULA: Y
       MSSQL_SA_PASSWORD: Cabwebapi2023_
+    ports:
+      - 1433:1433
     networks:
       - cabwebapi-dev
