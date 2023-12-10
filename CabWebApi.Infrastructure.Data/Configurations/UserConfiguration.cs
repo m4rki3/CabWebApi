@@ -10,25 +10,30 @@ using System.Threading.Tasks;
 namespace CabWebApi.Infrastructure.Data.Configurations;
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
-    {
-        builder.HasKey(client => client.Id)
-               .HasName("PK_Clients_Id");
-               //.IsClustered();
-        builder.Property(client => client.Name)
-               .HasColumnType("nvarchar(30)")
-               .IsRequired();
-        builder.Property(client => client.PhoneNumber)
-               .HasColumnType("nchar(12)")
-               .IsRequired();
-        builder.HasIndex(client => client.PhoneNumber)
-               .HasDatabaseName("IX_Clients_PhoneNumber")
-               .IsUnique();
-        builder.Property(client => client.Password)
-               .HasColumnType("nvarchar(20)")
-               .IsRequired();
-        builder.Property(client => client.BirthDate)
-               .HasColumnType("date")
-               .IsRequired();
-    }
+	public void Configure(EntityTypeBuilder<User> builder)
+	{
+		builder.Property(user => user.Name)
+			   .HasColumnType("nvarchar(30)")
+			   .IsRequired();
+
+		builder.Property(user => user.PhoneNumber)
+			   .HasColumnType("nchar(12)")
+			   .IsRequired();
+
+		builder.Property(user => user.Email)
+			   .HasColumnType("nvarchar(63)")
+			   .IsRequired();
+
+		builder.HasIndex(user => user.PhoneNumber)
+			   .HasDatabaseName("IX_Users_PhoneNumber")
+			   .IsUnique();
+
+		builder.Property(user => user.Password)
+			   .HasColumnType("nvarchar(20)")
+			   .IsRequired();
+
+		builder.Property(user => user.BirthDate)
+			   .HasColumnType("date")
+			   .IsRequired();
+	}
 }

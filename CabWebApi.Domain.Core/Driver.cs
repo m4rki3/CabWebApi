@@ -5,11 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CabWebApi.Domain.Core;
-public class Driver
+public class Driver : Person
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public int Salary { get; set; }
-    public byte Experience { get; set; }
-    public IEnumerable<Car> Cars { get; set; }
+	public int Salary { get; set; }
+	public long DrivingLicense { get; set; }
+	public IEnumerable<Car> Cars { get; set; }
 }

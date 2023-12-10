@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace CabWebApi.Domain.Core;
 public enum OrderStatus
 {
-    Created,
-    Approved,
-    DriverOnTheWay,
-    DriverIsWaiting,
-    InProgress,
-    Completed,
-    Canceled
+	Created,
+	Approved,
+	DriverOnTheWay,
+	DriverIsWaiting,
+	InProgress,
+	Completed,
+	Canceled
 }

@@ -1,0 +1,29 @@
+version: "3.9"
+networks:
+  cabwebapi-dev:
+    driver: bridge
+services:
+  aspnet:
+    container_name: cabwebapi-asp
+    build:
+      context: .
+      dockerfile: CabWebApi/Dockerfile
+    ports:
+      - 80:80
+    networks:
+      - cabwebapi-dev
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:80
+    depends_on:
+      - mssqldb
+  mssqldb:
+    container_name: mssqldb
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: Cabwebapi2023_
+    ports:
+      - 1433:1433
+    networks:
+      - cabwebapi-dev
