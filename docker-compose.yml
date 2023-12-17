@@ -21,9 +21,11 @@ services:
     container_name: mssqldb
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: Cabwebapi2023_
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Cabwebapi2023_"
+    # volumes:
+    #   - ./drive:/var/opt/mssql/data
     ports:
-      - 1433:1433
+      - 1303:1433
     networks:
       - cabwebapi-dev

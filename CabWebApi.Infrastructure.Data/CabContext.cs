@@ -18,7 +18,7 @@ public class CabContext : DbContext
 	public DbSet<Location> Locations { get; set; }
 	public CabContext(DbContextOptions<CabContext> options) : base(options)
 	{
-		//Database.EnsureCreated();
+		Database.EnsureCreated();
 	}
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

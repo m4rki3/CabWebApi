@@ -21,5 +21,6 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+/CabWebApi.Infrastructure.Data/Migrations/*
 LICENSE
 README.md
