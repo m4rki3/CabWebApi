@@ -2,9 +2,9 @@
 ---
 This is backend cab ordering application on __ASP.NET Web API__ is developed as pet-project based on _Onion Architecture_.
 
-_CabWebApi_ controllers provides CRUD operations and simple business logic related with order making.
+_CabWebApi_ controllers provides _CRUD_ operations and simple business logic related with order making.
 
-__Swagger__ is used for testing and interaction with contollers/actions.
+__Swagger__ is used for testing and interaction with contollers->actions.
 
 ## Content
 ---
@@ -24,23 +24,23 @@ __Swagger__ is used for testing and interaction with contollers/actions.
 -----
 <h3 id="docker">Docker</h3>
 
-1. Clone _CabWebApi_ repository to your local machine.
+1. Clone _CabWebApi_ repository to your local machine:
 	```
-	git clone https://github.com/m4rki3/CabWebApi
+	git clone https://github.com/m4rki3/CabWebApi.git
 	```
 
 2. On the next step you need to open __Cmd/PowerShell__ and move to directory where _CabWebApi.sln_ file is located.
 
-	This commands may be useful to move across directories in Cmd/PS:
+	This commands may be useful to move across directories in __Cmd/PS__:
 	```
 	cd ..
-	cd "nested-directory-name-without-qoutes"
+	cd "absolute-or-relative-path-without-qoutes"
 	```
 3. Then you should up your docker compose, described in _CabWebApi/docker-compose.yml_, using this command:
 	```
 	docker compose up -d
 	```
-4. Go to [page](https://localhost/swagger/index.html) on your web browser, where you can see Swagger html page.
+4. Go to [page](https://localhost/swagger/index.html) on your web browser, where you can see __Swagger__ html page.
 
 __Note__
 
@@ -57,9 +57,9 @@ Database context in API requires __Microsoft SQL Server 16.0.1000.6__ version or
 
 You may use __LocalDb__, __Express__ or __Development__ edition, which has to be installed on your OS.
 
-1. Clone _CabWebApi_ repository to your local machine.
+1. Clone _CabWebApi_ repository to your local machine:
 	```
-	git clone https://github.com/m4rki3/CabWebApi
+	git clone https://github.com/m4rki3/CabWebApi.git
 	```
 
 
@@ -128,11 +128,11 @@ __NuGet__ packages included below must be installed for each project file.
 
 ---
 
-I decided to test my project using simple Swagger.
+I decided to test my project using simple __Swagger__.
 
 There are list of controllers and actions in API testing [page](https://localhost/swagger/index.html) on web application running.
 
-You could put required data into actions and get JSON response with status code.
+You could put required data into actions and get _JSON_ response with status code.
 
 
 <h2 id="database">Database</h2>
