@@ -29,7 +29,7 @@ public class DriverConfiguration : IEntityTypeConfiguration<Driver>
 			   .IsUnique();
 
 		builder.Property(driver => driver.Password)
-			   .HasColumnType("nvarchar(20)")
+			   .HasColumnType("nvarchar(100)")
 			   .IsRequired();
 
 		builder.Property(driver => driver.BirthDate)
