@@ -72,12 +72,14 @@ public class AccountController : ControllerBase
 		if (userIsRegistered)
 			return BadRequest("User or driver with entered phone number had been already registered");
 
+		string hashedPassword = userService.HashPassword(model.Password);
+
 		// recursive generics demo
 		UserBuilder builder = new();
 		builder.Named(model.Name)
 			   .HasPhoneNumber(model.PhoneNumber)
 			   .HasEmail(model.Email)
-			   .HasPassword(model.Password)
+			   .HasPassword(hashedPassword)
 			   .HasBirthDate(model.BirthDate);
 		User user = builder.Build();
 		User created = (await userService.CreateAsync(user)).Item1.Entity;
@@ -112,12 +114,14 @@ public class AccountController : ControllerBase
 		if (licenseIsRegistered)
 			return BadRequest("Driver with entered driving license had been already registered");
 
+		string hashedPassword = driverService.HashPassword(model.Password);
+
 		// recursive generics demo
 		DriverBuilder builder = new();
 		builder.Named(model.Name)
 			   .HasPhoneNumber(model.PhoneNumber)
 			   .HasEmail(model.Email)
-			   .HasPassword(model.Password)
+			   .HasPassword(hashedPassword)
 			   .HasBirthDate(model.BirthDate)
 			   .Earns(salary)
 			   .HasLicense(drivingLicense);
@@ -142,7 +146,7 @@ public class AccountController : ControllerBase
 		if (dbUser is null)
 			return Unauthorized("User with entered phone number is not registered");
 
-		if (dbUser.Password != model.Password)
+		if (!userService.PasswordsMatch(dbUser.Password, model.Password))
 			return Unauthorized("Password is wrong");
 
 		ClaimsPrincipal principal = userService.GetPrincipal(dbUser);
@@ -163,7 +167,7 @@ public class AccountController : ControllerBase
 		if (dbDriver is null)
 			return Unauthorized("Driver with entered phone number is not registered");
 
-		if (dbDriver.Password != model.Password)
+		if (!driverService.PasswordsMatch(dbDriver.Password, model.Password))
 			return Unauthorized("Password is wrong");
 
 		ClaimsPrincipal principal = driverService.GetPrincipal(dbDriver);
