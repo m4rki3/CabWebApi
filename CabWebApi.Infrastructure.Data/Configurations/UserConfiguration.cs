@@ -29,7 +29,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 			   .IsUnique();
 
 		builder.Property(user => user.Password)
-			   .HasColumnType("nvarchar(20)")
+			   .HasColumnType("nvarchar(100)")
 			   .IsRequired();
 
 		builder.Property(user => user.BirthDate)
