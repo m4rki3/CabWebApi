@@ -5,6 +5,7 @@ using CabWebApi.Infrastructure.Business;
 using CabWebApi.Models;
 using CabWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -82,7 +83,6 @@ public class DriverController : ControllerBase
 			if (isRegistered)
 				return BadRequest("Driver with requested license had been already registered");
 		}
-
 		DriverBuilder builder = new(dbDriver);
 		builder.Named(model.Name)
 			   .HasPhoneNumber(model.PhoneNumber)
@@ -92,6 +92,11 @@ public class DriverController : ControllerBase
 			   .HasLicense(model.DrivingLicense);
 		dbDriver = builder.Build();
 		await modelService.UpdateAsync(dbDriver);
+
+		ClaimsPrincipal updatedPrincipal = driverService.GetPrincipal(dbDriver);
+		await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+		await HttpContext.SignInAsync(updatedPrincipal);
 
 		return Ok(dbDriver);
 	}

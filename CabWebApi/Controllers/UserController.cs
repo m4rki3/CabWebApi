@@ -4,8 +4,11 @@ using CabWebApi.Domain.Interfaces;
 using CabWebApi.Infrastructure.Business;
 using CabWebApi.Models;
 using CabWebApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace CabWebApi.Controllers;
 
@@ -51,6 +54,7 @@ public class UserController : ControllerBase
 
 		return Ok(dbUser);
 	}
+
 	[HttpPut("{id}")]
 	[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
 	[ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
@@ -72,7 +76,6 @@ public class UserController : ControllerBase
 				return BadRequest(
 					"User or driver with requested phone number had been already registered");
 		}
-
 		UserBuilder builder = new(dbUser);
 		builder.Named(model.Name)
 			   .HasPhoneNumber(model.PhoneNumber)
@@ -81,6 +84,11 @@ public class UserController : ControllerBase
 			   .HasBirthDate(model.BirthDate);
 		dbUser = builder.Build();
 		await modelService.UpdateAsync(dbUser);
+
+		ClaimsPrincipal updatedPrincipal = userService.GetPrincipal(dbUser);
+		await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+		await HttpContext.SignInAsync(updatedPrincipal);
 
 		return Ok(dbUser);
 	}
