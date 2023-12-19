@@ -54,7 +54,7 @@ public class AccountService<TUser> : IAccountService<TUser>
 	public string HashPassword(string password)
 	{
 		if (string.IsNullOrWhiteSpace(password))
-			throw new ArgumentNullException("Password must be not null or white space");
+			throw new ArgumentNullException("Password must not contain only white spaces");
 
 		byte[] salt;
 
@@ -72,6 +72,12 @@ public class AccountService<TUser> : IAccountService<TUser>
 	}
 	public bool PasswordsMatch(string hashedPassword, string password)
 	{
+		if (string.IsNullOrWhiteSpace(hashedPassword))
+			throw new ArgumentNullException("Hashed password must not contain only white spaces");
+
+		if (string.IsNullOrWhiteSpace(password))
+			throw new ArgumentNullException("Password must not contain only white spaces");
+
 		byte[] hash = Convert.FromBase64String(hashedPassword);
 		if (hash.Length != hashSize || hash[0] != 0)
 			return false;
