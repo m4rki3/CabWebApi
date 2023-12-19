@@ -137,6 +137,7 @@ public class AccountController : ControllerBase
 	[HttpPost]
 	[ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status301MovedPermanently)]
 	public async Task<IActionResult> UserLogin([FromForm] LoginModel model, string? returnUrl)
 	{
@@ -152,12 +153,15 @@ public class AccountController : ControllerBase
 		ClaimsPrincipal principal = userService.GetPrincipal(dbUser);
 		await HttpContext.SignInAsync(principal);
 
-		return LocalRedirectPermanent(returnUrl ?? "/");
+		return (string.IsNullOrWhiteSpace(returnUrl)) is true ?
+				Ok("Driver has signed in") :
+				LocalRedirectPermanent(returnUrl);
 	}
 
 	[HttpPost]
 	[ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(string), StatusCodes.Status301MovedPermanently)]
 	public async Task<IActionResult> DriverLogin([FromForm] LoginModel model, string? returnUrl)
 	{
@@ -173,7 +177,9 @@ public class AccountController : ControllerBase
 		ClaimsPrincipal principal = driverService.GetPrincipal(dbDriver);
 		await HttpContext.SignInAsync(principal);
 
-		return LocalRedirectPermanent(returnUrl ?? "/");
+		return (string.IsNullOrWhiteSpace(returnUrl)) is true ?
+				Ok("Driver has signed in") :
+				LocalRedirectPermanent(returnUrl);
 	}
 
 	[HttpPost]
