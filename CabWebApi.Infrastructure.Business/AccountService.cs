@@ -13,15 +13,15 @@ using System.Threading.Tasks;
 
 namespace CabWebApi.Infrastructure.Business;
 
-public class AccountService<TUser> : IAccountService<TUser>
-	where TUser : Person
+public class AccountService<TPerson> : IAccountService<TPerson>
+	where TPerson : Person
 {
 	private const int hashSize = 0x31;
 	private const int saltSize = 0x10;
 	private const int keyBufferSize = 0x20;
-	private readonly IModelRepository<TUser> repository;
-	public IModelRepository<TUser> Repository => repository;
-	public AccountService(IModelRepository<TUser> repository)
+	private readonly IModelRepository<TPerson> repository;
+	public IModelRepository<TPerson> Repository => repository;
+	public AccountService(IModelRepository<TPerson> repository)
 	{
 		this.repository = repository;
 	}
@@ -29,22 +29,22 @@ public class AccountService<TUser> : IAccountService<TUser>
 		repository.GetAllWithAsync(propertyName, propertyValue)
 				  .ContinueWith(task =>
 				  {
-					  List<TUser> dbUsers = task.Result;
-					  return dbUsers.Count == 0 ? false : true;
+					  List<TPerson> dbPersons = task.Result;
+					  return dbPersons.Count == 0 ? false : true;
 				  });
 
-	public Task<TUser?> GetRegisteredWith(string propertyName, object? propertyValue) =>
+	public Task<TPerson?> GetRegisteredWith(string propertyName, object? propertyValue) =>
 		repository.GetAllWithAsync(propertyName, propertyValue)
 				  .ContinueWith(task => task.Result.FirstOrDefault());
 
-	public ClaimsPrincipal GetPrincipal(TUser user)
+	public ClaimsPrincipal GetPrincipal(TPerson person)
 	{
 		List<Claim> claims = new()
 		{
-			new Claim(ClaimTypes.Name, user.Name),
-			new Claim(ClaimTypes.Email, user.Email),
-			new Claim(ClaimTypes.DateOfBirth, user.BirthDate.ToShortDateString()),
-			new Claim(ClaimTypes.Role, typeof(TUser).Name)
+			new Claim(ClaimTypes.Name, person.Name),
+			new Claim(ClaimTypes.Email, person.Email),
+			new Claim(ClaimTypes.DateOfBirth, person.BirthDate.ToShortDateString()),
+			new Claim(ClaimTypes.Role, typeof(TPerson).Name)
 		};
 		ClaimsIdentity identity = new(
 			claims, CookieAuthenticationDefaults.AuthenticationScheme
@@ -57,7 +57,6 @@ public class AccountService<TUser> : IAccountService<TUser>
 			throw new ArgumentNullException("Password must not contain only white spaces");
 
 		byte[] salt;
-
 		byte[] keyBuffer;
 
 		using (Rfc2898DeriveBytes rfc = new(password, saltSize, iterations: 0x3e8))
