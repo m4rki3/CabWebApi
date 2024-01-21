@@ -1,18 +1,20 @@
 ﻿using CabWebApi.Domain.Core;
 using CabWebApi.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CabWebApi.Infrastructure.Business;
 public class LocationService : IModelService<Location>
 {
 	private readonly IModelRepository<Location> repository;
+	//private readonly IDistributedCache cache;
 	public IModelRepository<Location> Repository => repository;
-	public LocationService(IModelRepository<Location> repository)
+	//public IDistributedCache Cache => cache;
+
+	public LocationService(
+		IModelRepository<Location> repository
+		//IDistributedCache cache
+		)
 	{
 		this.repository = repository;
+		//this.cache = cache;
 	}
 }
