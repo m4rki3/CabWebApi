@@ -4,7 +4,7 @@ This is backend cab ordering application on __ASP.NET Web API__ is developed as 
 
 _CabWebApi_ controllers provides _CRUD_ operations and simple business logic related with order making.
 
-__Swagger__ is used for testing and interaction with contollers->actions.
+__Swagger__ is used for testing and interaction with controllers->actions.
 
 ## Content
 ---
@@ -34,7 +34,7 @@ __Swagger__ is used for testing and interaction with contollers->actions.
 	This commands may be useful to move across directories in __Cmd/PS__:
 	```
 	cd ..
-	cd "absolute-or-relative-path-without-qoutes"
+	cd 'absolute-or-relative-path-with-qoutes'
 	```
 3. Then you should up your docker compose, described in _CabWebApi/docker-compose.yml_, using this command:
 	```
@@ -155,4 +155,4 @@ Location model adding was problematic because I could not know specialities of c
 - Ilya Makovich - .NET Backend Developer
 
 >One day I had an idea to create my own backend project.
-I had been inspired by Cab mobile applications, which are in use among a lot of people nowadays.
+I was inspired by Cab mobile applications, which are in use among a lot of people nowadays.
