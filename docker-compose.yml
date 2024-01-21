@@ -2,6 +2,7 @@ version: "3.9"
 networks:
   cabwebapi-dev:
     driver: bridge
+
 services:
   aspnet:
     container_name: cabwebapi-asp
@@ -9,23 +10,52 @@ services:
       context: .
       dockerfile: CabWebApi/Dockerfile
     ports:
-      - 80:80
+      - '80:80'
     networks:
       - cabwebapi-dev
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80
+      REDIS_HOST: 'redis'
+      REDIS_PASSWORD: 'Cabwebapi2023_'
+      WATCHDOG_HOST: 'watchdog'
+      WATCHDOG_PORT: '903'
     depends_on:
       - mssqldb
+
   mssqldb:
     container_name: mssqldb
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "Cabwebapi2023_"
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'Cabwebapi2023_'
     # volumes:
     #   - ./drive:/var/opt/mssql/data
     ports:
-      - 1303:1433
+      - '1303:1433'
     networks:
       - cabwebapi-dev
+
+#  redis:
+#    container_name: redis
+#    image: redis:latest
+#    ports:
+#      - '1500:1500'
+#    networks:
+#      - cabwebapi-dev
+
+  watchdog:
+    container_name: watchdog
+    build:
+      context: .
+      dockerfile: Watchdog/Dockerfile
+    ports:
+      - '903:903'
+    networks:
+      - cabwebapi-dev
+    tty: true
+    depends_on: 
+      - aspnet
+    environment:
+      WATCHDOG_HOST: 'watchdog'
+      WATCHDOG_PORT: '903'

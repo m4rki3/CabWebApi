@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CabWebApi.Models;
 public class LoginModel
@@ -18,6 +19,7 @@ public class LoginModel
 		ErrorMessage = "Password must contain only A-Z, a-z, 0-9, _ symbols")]
 
 	[DataType(DataType.Password)]
+	// ReSharper disable once Mvc.TemplateNotResolved
 	[UIHint("Password")]
 	public string Password { get; set; }
 }

@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace CabWebApi.Services.Interfaces;
 
-public interface IAccountService<TUser> : IModelService<TUser>
-	where TUser : Person
+public interface IAccountService<TPerson> : IModelService<TPerson>
+	where TPerson : Person
 {
 	Task<bool> IsRegisteredWith(string propertyName, object? propertyValue);
-	Task<TUser?> GetRegisteredWith(string propertyName, object? propertyValue);
-	ClaimsPrincipal GetPrincipal(TUser user);
+	Task<TPerson?> GetRegisteredWith(string propertyName, object? propertyValue);
+	ClaimsPrincipal GetPrincipal(TPerson person);
+	string HashPassword(string password);
+	bool PasswordsMatch(string hashedPassword, string password);
 }

@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Watchdog", "Watchdog\Watchdog.csproj", "{7D4F9701-B621-4261-8CF0-CD1DF8A815E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{6B3F0695-5F7B-4A2A-9884-5D57A656CFFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B3F0695-5F7B-4A2A-9884-5D57A656CFFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B3F0695-5F7B-4A2A-9884-5D57A656CFFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D4F9701-B621-4261-8CF0-CD1DF8A815E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D4F9701-B621-4261-8CF0-CD1DF8A815E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D4F9701-B621-4261-8CF0-CD1DF8A815E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D4F9701-B621-4261-8CF0-CD1DF8A815E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
