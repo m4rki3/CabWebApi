@@ -47,7 +47,8 @@ public class UserController : ControllerBase
 	[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> Get(int id)
 	{
-		User? dbUser = await modelService.GetAsync(id);
+		User? dbUser = await modelService.GetFromCacheAsync(id);
+		// User? dbUser = await modelService.GetAsync(id);
 
 		if (dbUser is null)
 			return NotFound("User with requested id is not found in database");

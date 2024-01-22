@@ -137,7 +137,8 @@ public class OrderController : ControllerBase
 	[ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
 	public async Task<IActionResult> Get(int id)
 	{
-		Order? dbOrder = await orderService.GetAsync(id);
+		Order? dbOrder = await orderService.GetFromCacheAsync(id);
+		// Order? dbOrder = await orderService.GetAsync(id);
 
 		if (dbOrder is null)
 			return NotFound("Order with requested id is not found in database");

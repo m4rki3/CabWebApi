@@ -46,7 +46,8 @@ public class DriverController : ControllerBase
 	[ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
 	public async Task<IActionResult> Get(int id)
 	{
-		Driver? dbDriver = await modelService.GetAsync(id);
+		Driver? dbDriver = await modelService.GetFromCacheAsync(id);
+		// Driver? dbDriver = await modelService.GetAsync(id);
 
 		if (dbDriver is null)
 			return NotFound("Driver with requested id is not found in database");

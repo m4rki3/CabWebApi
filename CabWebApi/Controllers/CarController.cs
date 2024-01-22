@@ -39,7 +39,8 @@ public class CarController : ControllerBase
 	[ProducesResponseType(typeof(Car), StatusCodes.Status200OK)]
 	public async Task<IActionResult> Get(int id)
 	{
-		Car? dbCar = await carService.GetAsync(id);
+		Car? dbCar = await carService.GetFromCacheAsync(id);
+		// Car? dbCar = await carService.GetAsync(id);
 
 		if (dbCar is null)
 			return NotFound("Car with requested id is not found in database");
