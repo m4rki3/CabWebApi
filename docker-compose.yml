@@ -17,7 +17,8 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80
       REDIS_HOST: 'redis'
-      REDIS_PASSWORD: 'Cabwebapi2023_'
+      REDIS_INSTANCE: 'redis-api:6379,abortConnect=false'
+#      REDIS_PASSWORD: 'Cabwebapi2023_'
       WATCHDOG_HOST: 'watchdog'
       WATCHDOG_PORT: '903'
     depends_on:
@@ -36,13 +37,19 @@ services:
     networks:
       - cabwebapi-dev
 
-#  redis:
-#    container_name: redis
-#    image: redis:latest
-#    ports:
-#      - '1500:1500'
-#    networks:
-#      - cabwebapi-dev
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - '6379:6379'
+#    command:
+#      - redis
+#      - --requirepass
+#      - Cabwebapi2023_
+    networks:
+      - cabwebapi-dev
+    depends_on:
+      - aspnet
 
   watchdog:
     container_name: watchdog

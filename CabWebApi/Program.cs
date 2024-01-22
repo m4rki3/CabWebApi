@@ -14,7 +14,7 @@ using System.Text.Json.Serialization;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 string? dbConnection = builder.Configuration.GetConnectionString("DefaultConnection");
-// string? connection = "Server=localhost";
+// string? dbConnection = "Server=localhost";
 string? watchdogHost = builder.Configuration["WATCHDOG_HOST"];
 string? watchdogPortStr = builder.Configuration["WATCHDOG_PORT"];
 
@@ -25,12 +25,12 @@ builder.WebHost.ConfigureServices(services =>
 		options.SchemaFilter<EnumXmlSchemaFilter>()
 		// options.SchemaFilter<EnumSchemaFilter>();
 	);
-	// services.AddStackExchangeRedisCache(options =>
-	// {
-	// 	options.Configuration = builder.Configuration["REDIS_HOST"];
-	// 	options.ConfigurationOptions.Password = builder.Configuration["REDIS_PASSWORD"];
-	// 	options.InstanceName = builder.Configuration["REDIS_HOST"];
-	// });
+	services.AddStackExchangeRedisCache(options =>
+	{
+		options.Configuration = builder.Configuration["REDIS_HOST"];
+		// options.ConfigurationOptions.Password = builder.Configuration["REDIS_PASSWORD"];
+		options.InstanceName = builder.Configuration["REDIS_INSTANCE"];
+	});
 	services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 			.AddCookie(options =>
 			{
@@ -71,7 +71,6 @@ app.UseSwaggerUI(options =>
 	options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1")
 );
 app.UseRouting();
-// app.UseHealthChecks("/health");
 app.UseAuthentication();
 
 var rewriteOptions = new RewriteOptions().AddRedirect("(.*)/$", "$1");
