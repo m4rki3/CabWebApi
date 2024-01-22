@@ -4,6 +4,7 @@ using CabWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace CabWebApi.Infrastructure.Business;
 
@@ -14,16 +15,13 @@ public class AccountService<TPerson> : IAccountService<TPerson>
 	private const int saltSize = 0x10;
 	private const int keyBufferSize = 0x20;
 	private readonly IModelRepository<TPerson> repository;
-	//private readonly IDistributedCache cache;
+	private readonly IDistributedCache cache;
 	public IModelRepository<TPerson> Repository => repository;
-	//public IDistributedCache Cache => cache;
-	public AccountService(
-		IModelRepository<TPerson> repository
-		//IDistributedCache cache
-		)
+	public IDistributedCache Cache => cache;
+	public AccountService(IModelRepository<TPerson> repository, IDistributedCache cache)
 	{
 		this.repository = repository;
-		//this.cache = cache;
+		this.cache = cache;
 	}
 	public Task<bool> IsRegisteredWith(string propertyName, object? propertyValue) =>
 		repository.GetAllWithAsync(propertyName, propertyValue)

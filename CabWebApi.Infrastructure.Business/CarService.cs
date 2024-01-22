@@ -7,16 +7,13 @@ namespace CarWebApi.Infrastructure.Business;
 public class CarService : ICarService
 {
 	private readonly IModelRepository<Car> repository;
-	//private readonly IDistributedCache cache;
+	private readonly IDistributedCache cache;
 	public IModelRepository<Car> Repository => repository;
-	//public IDistributedCache Cache => cache;
-	public CarService(
-		IModelRepository<Car> repository
-		//IDistributedCache cache
-		)
+	public IDistributedCache Cache => cache;
+	public CarService(IModelRepository<Car> repository, IDistributedCache cache)
 	{
 		this.repository = repository;
-		//this.cache = cache;
+		this.cache = cache;
 	}
 
 	public Task<List<Car>> GetAwaitingCarsAsync() =>

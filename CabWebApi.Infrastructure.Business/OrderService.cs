@@ -1,26 +1,23 @@
 ﻿using CabWebApi.Domain.Core;
 using CabWebApi.Domain.Interfaces;
 using CabWebApi.Services.Interfaces;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace CabWebApi.Infrastructure.Business;
 public class OrderService : IOrderService
 {
 	private readonly IModelRepository<Order> repository;
-	//private readonly IDistributedCache cache;
+	private readonly IDistributedCache cache;
 	private const float carsRatio = 0.3f;
 	private const int carsRatioPrice = 250;
 	private const int travelTimePrice = 9;
 	private const int weatherPrice = 50;
 	public IModelRepository<Order> Repository => repository;
-	//public IDistributedCache Cache => cache;
-
-	public OrderService(
-		IModelRepository<Order> repository
-		//IDistributedCache cache
-		)
+	public IDistributedCache Cache => cache;
+	public OrderService(IModelRepository<Order> repository, IDistributedCache cache)
 	{
 		this.repository = repository;
-		//this.cache = cache;
+		this.cache = cache;
 	}
 	public Task<List<Order>> GetOrdersInExecution()
 	{
